@@ -1,102 +1,99 @@
-/*
-Justeven Curangcurang
-Justeven's ATM Machine Simulator
-*/
-#include<iostream>
-#include<iomanip>
+#include <iostream>
+#include <fstream>
 using namespace std;
 
-int main (){
-	const int reqbalance = 1;
-	long double reqdeposit = 0;
-	long double reqwithdraw = 0;
-	const int deposit = 2;
-	const int withdraw = 3;
-	long double balance = 1000;
-	const int correctuserpin = 1234;
-	int userpin = 0;
-	int menu = 0;
-	
-	cout << "Welcome to Justeven's ATM Machine \n";
-	
-	while (userpin != correctuserpin){
-		cout << "Enter 4 Digit PIN ";
-		cin >> userpin;
-		
-		if (userpin >= 0000 && userpin <= 9999){
-			if(userpin > correctuserpin){
-				cout <<"Access Denied!\n";
-			}
-			else if (userpin < correctuserpin){
-				cout <<"Access Denied!\n";
-			}
-		}
-		else if (userpin >= 9999){
-			cout << "Wrong Type!\n";
-		}
-		else {
-			cout <<"Wrong Type!\n";
-		}
-	}
-	cout << "\n";
-	cout << "--- Main Menu ---\n";
-	cout << "1. Check Balance\n";
-	cout << "2. Deposit Money\n";
-	cout << "3. Withdraw Money\n";
-	cout << "4. Exit\n";
-	
-	while (true){
-		cout << "Enter your Choice: ";
-		cin >> menu;	
-		
-		if (menu >= 1 && menu <= 1){
-			cout << "Your Balance is: " << fixed << setprecision(2) << balance << "PHP\n" << endl;
-			cout << "--- Main Menu ---\n";
-			cout << "1. Check Balance\n";
-			cout << "2. Deposit Money\n";
-			cout << "3. Withdraw Money\n";
-			cout << "4. Exit\n";
-		}	
-		else if (menu >= 2 && menu <= 2){
-			cout << "Enter Amount to Deposit: ";
-			cin >> reqdeposit;
-			balance += reqdeposit;
-			cout << "Deposit successful! Your New Balance is: " << fixed << setprecision(2) << balance << "PHP\n" << endl;
-			cout << "--- Main Menu ---\n";
-			cout << "1. Check Balance\n";
-			cout << "2. Deposit Money\n";
-			cout << "3. Withdraw Money\n";
-			cout << "4. Exit\n";
-		}
-		else if (menu >= 3 && menu <= 3){
-			cout << "Enter Amount to Withdraw: ";
-			cin >> reqwithdraw;
-			if (balance <= reqwithdraw){
-				cout << "Insufficient balance, You don't have Enough Money, WORK MORE!! \n" << endl;
-				cout << "--- Main Menu ---\n";
-				cout << "1. Check Balance\n";
-				cout << "2. Deposit Money\n";
-				cout << "3. Withdraw Money\n";
-				cout << "4. Exit\n";
-			}
-			else {
-				balance -= reqwithdraw;
-				cout << "Withdrawal is successful! Your New Balance is: " << fixed << setprecision(2) << balance << "PHP\n" << endl;
-				cout << "--- Main Menu ---\n";
-				cout << "1. Check Balance\n";
-				cout << "2. Deposit Money\n";
-				cout << "3. Withdraw Money\n";
-				cout << "4. Exit\n";
-			}
-		}
-		else if (menu >= 4 && menu <= 4){
-			cout <<"Thank you for using Justeven's ATM Machine!";
-			exit(0);
-		}
-		else {
-			cout << "Try Again ";
-		}
-	}
-	
-	return 0;
+int main() {
+
+    const int reqbalance = 1;
+    long double reqdeposit = 0;
+    long double reqwithdraw = 0;
+    const int deposit = 2;
+    const int withdraw = 3;
+    long double balance = 5000;
+
+    const int correctPin = 1234 ;   // FIXED invalid variable name
+    int userpin = 0;
+    int choice = 0;
+    long double amount = 0;        // FIXED missing variable
+
+    cout << "Welcome to Every's ATM Machine \n";
+
+    cout << "Please Enter Your 4-Digit User PIN: ";   // FIXED cout <<
+    cin >> userpin;
+
+    if (userpin != correctPin) {   // FIXED invalid variable names
+        cout << "Access Denied." << endl;
+        return 0;
+    }
+    
+    ifstream inFile("/storage/emulated/0/Download/every.txt"); // READ Balance
+    if (inFile.is_open()) {
+        inFile >> balance; // read the first value as int
+        inFile.close();
+        cout << "Stored Balance: " << balance << " PHP" << endl;
+    } else {
+        cout << "Unable to open file for reading. Using default value 0." << endl;
+    }
+    
+    do {
+        cout << "--- Main Menu ---\n";
+        cout << "1. Check Balance\n";
+        cout << "2. Deposit Money\n";
+        cout << "3. Withdraw Money\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+
+        case 1:   // CHECK BALANCE
+            cout << "Your Balance is: " << balance << " PHP\n" << endl;
+            break;
+
+        case 2:   // DEPOSIT
+            cout << "Enter Amount to Deposit: ";
+            cin >> amount;
+            if (amount > 0) {
+                balance += amount;
+                cout << "Deposit successful. New Balance: " << balance << endl;
+            } else {
+                cout << "Invalid deposit amount." << endl;
+            }
+            break;
+
+        case 3:   // WITHDRAW
+            cout << "Enter Amount to Withdraw: ";
+            cin >> amount;
+            if (amount > 0 && amount <= balance) {
+                balance -= amount;
+                cout << "Withdrawal Successful. Remaining Balance: "
+                     << balance << endl;
+            } else if (amount > balance) {
+                cout << "Insufficient balance! You don't have enough money, WORK MORE!!\n";
+            } else {
+                cout << "Invalid withdrawal amount.\n";
+            }
+            break;
+
+        case 4:   // EXIT
+            cout << "Thank you for using Every's ATM Machine!";
+            break;
+
+        default:
+            cout << "Invalid choice. Try again.\n";
+        }
+    
+    } while (choice != 4);
+    
+    ofstream outFile("/storage/emulated/0/Download/every.txt"); //Save Balance
+    if (outFile.is_open()) {
+        outFile << balance << endl;
+        outFile << " PHP" << endl;
+        outFile.close();
+        cout << "The Stored Balance is: " << balance << " PHP" << endl;
+    } else {
+        cout << "Unable to open file for writing." << endl;
+    }
+
+    return 0;
 }
